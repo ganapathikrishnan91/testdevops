@@ -1,87 +1,11 @@
-# Azure DevOps Pipeline - Self-Hosted Agent Pool
-# Agent Pool: GANA_AZUREDEVOPS
- 
 trigger:
   - main
  
 pool:
-  name: GANA_AZUREDEVOPS  # Self-hosted agent pool name
+  name: GANA_AZUREDEVOPS
  
-variables:
-  buildConfiguration: 'Release'
-  projectName: 'SampleProject'
- 
-stages:
-  - stage: Build
-    displayName: 'Build Stage'
-    jobs:
-      - job: BuildJob
-        displayName: 'Build Job'
-        pool:
-          name: GANA_AZUREDEVOPS  # Self-hosted agent pool
-        steps:
-          - script: echo "Running on self-hosted agent pool: GANA_AZUREDEVOPS"
-            displayName: 'Print Agent Info'
- 
-          # Sample cat command to read a file
-          - script: |
-              echo "==== Running cat command ===="
-              cat $(Build.SourcesDirectory)/README.md
-            displayName: 'Cat README file'
- 
-          # Cat a specific config file
-          - script: |
-              echo "==== Displaying pipeline YAML ===="
-              cat $(Build.SourcesDirectory)/azure-pipeline.yml
-            displayName: 'Cat Pipeline YAML'
- 
-          # Cat system info
-          - script: |
-              echo "==== Agent OS Info ===="
-              cat /etc/os-release
-            displayName: 'Cat OS Release Info'
- 
-          # Cat environment variables to a file and display
-          - script: |
-              echo "==== Saving and displaying env info ===="
-              printenv > env_output.txt
-              cat env_output.txt
-            displayName: 'Cat Environment Variables'
- 
-  - stage: Test
-    displayName: 'Test Stage'
-    dependsOn: Build
-    jobs:
-      - job: TestJob
-        displayName: 'Test Job'
-        pool:
-          name: GANA_AZUREDEVOPS  # Self-hosted agent pool
-        steps:
-          - script: |
-              echo "==== Running Tests ===="
-              echo "All tests passed!"
-            displayName: 'Run Tests'
- 
-          # Cat test results file if exists
-          - script: |
-              if [ -f "test-results.xml" ]; then
-                echo "==== Test Results ===="
-                cat test-results.xml
-              else
-                echo "No test results file found."
-              fi
-            displayName: 'Cat Test Results'
- 
-  - stage: Deploy
-    displayName: 'Deploy Stage'
-    dependsOn: Test
-    jobs:
-      - job: DeployJob
-        displayName: 'Deploy Job'
-        pool:
-          name: GANA_AZUREDEVOPS  # Self-hosted agent pool
-        steps:
-          - script: |
-              echo "==== Deploying Application ===="
-              echo "Deployment complete on agent: GANA_AZUREDEVOPS"
-            displayName: 'Deploy Application'
+steps:
+  - script: |
+      uname
+      hostname
+    displayName: 'Run uname and hostname'
