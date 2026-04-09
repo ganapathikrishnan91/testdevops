@@ -6,6 +6,6 @@ pool:
  
 steps:
   - script: |
-      uname
+      uname -a
       hostname
     displayName: 'Run uname and hostname'
