@@ -7,9 +7,6 @@ pool:
 steps:
   - script: |
       uname -a
-      free -h
-      cat /proc/meminfo
-      vmstat -s
       hostname
 
     displayName: 'systeminfo'
