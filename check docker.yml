@@ -1,0 +1,90 @@
+trigger:
+  - main
+ 
+pool:
+  name: GANA_AZUREDEVOPS
+
+steps:
+
+# ─────────────────────────────────────────
+# STEP 1: Check if Docker is installed
+# ─────────────────────────────────────────
+- bash: |
+    echo "Checking if Docker is installed..."
+    if sudo docker ps > /dev/null 2>&1; then
+      echo "##[section]Docker is already installed. Skipping installation."
+      docker --version
+      echo "##vso[task.setvariable variable=DOCKER_INSTALLED]true"
+    else
+      echo "Docker is NOT installed. Will proceed to install."
+      echo "##vso[task.setvariable variable=DOCKER_INSTALLED]false"
+    fi
+  displayName: 'Step 1 - Check Docker Installation'
+
+# ─────────────────────────────────────────
+# STEP 2: Install Docker (only if not installed)
+# ─────────────────────────────────────────
+- bash: |
+    echo "##[section]Starting Docker Installation..."
+
+    # Remove old versions
+    echo "Removing old Docker versions if any..."
+    sudo apt-get remove -y docker docker-engine docker.io containerd runc || true
+
+    # Update and install dependencies
+    echo "Installing dependencies..."
+    sudo apt-get update
+    sudo apt-get install -y \
+      ca-certificates \
+      curl \
+      gnupg \
+      lsb-release
+
+    # Add Docker GPG key
+    echo "Adding Docker GPG key..."
+    sudo install -m 0755 -d /etc/apt/keyrings
+    sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg \
+      -o /etc/apt/keyrings/docker.asc
+    sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+    # Add Docker repository
+    echo "Adding Docker repository..."
+    echo \
+      "deb [arch=$(dpkg --print-architecture) \
+      signed-by=/etc/apt/keyrings/docker.asc] \
+      https://download.docker.com/linux/ubuntu \
+      $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+      sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+    # Update apt with new repo
+    sudo apt-get update
+
+    # Check available versions
+    echo "Available Docker versions:"
+    apt-cache madison docker-ce
+
+    # Install Docker version 28
+    echo "Installing Docker version 28..."
+    sudo apt-get install -y \
+      docker-ce=5:28.* \
+      docker-ce-cli=5:28.* \
+      containerd.io \
+      docker-buildx-plugin \
+      docker-compose-plugin
+
+    # Start and enable Docker service
+    sudo systemctl start docker
+    sudo systemctl enable docker
+
+    # Verify installation
+    echo "##[section]Verifying Docker Installation..."
+    sudo systemctl status docker
+    docker --version
+    sudo docker run hello-world
+    docker version
+    docker info
+    docker compose version
+
+    echo "##[section]Docker installation completed successfully!"
+  displayName: 'Step 2 - Install Docker'
+  condition: eq(variables['DOCKER_INSTALLED'], 'false')
