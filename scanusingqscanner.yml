@@ -1,0 +1,43 @@
+trigger:
+  - main
+ 
+pool:
+  name: GANA_AZUREDEVOPS
+ 
+steps:
+
+# ─────────────────────────────────────────
+# STEP 1: Check the systeminfo 
+# ─────────────────────────────────────────
+  - script: |
+      uname -a
+      hostname
+    displayName: 'systeminfo'
+
+    
+# ─────────────────────────────────────────
+# STEP 2: scan using Qualys QScanner for public image (nginx:mainline-alpine3.23)
+# ─────────────────────────────────────────
+
+- task: Bash@3
+  displayName: "Download qscanner"
+  inputs:
+    scriptType: bash
+    targetType: 'inline'
+    script: |
+        wget https://www.qualys.com/qscanner/download/latest/download_qscanner.sh
+        chmod +x download_qscanner.sh
+        ./download_qscanner.sh
+        ls -la
+        chmod +x linux-amd64/qscanner
+- task: Bash@3
+  displayName: "Run QScanner"
+  inputs:
+    targetType: 'inline'
+    script: |
+      # Execute the qscanner command
+      cd linux-amd64
+      ./qscanner image nginx:mainline-alpine3.23 --mode get-report --pod US1 --access-token "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJxdWF5c19nazgiLCJpc3MiOiJxYXMiLCJwb3J0YWxVc2VySWQiOjQwOTc5Mjc4MSwic2VjcmV0SWQiOiJkMTYwODE0MS0yNzU2LTRlMTMtOThkOS1kMTNkM2ViODllM2EiLCJxd2ViVXNlcklkIjoyNjk5MDE1LCJhdWQiOiJxYXMiLCJjdXN0b21lcklkIjoyMTI0NjQsInVzZXJVdWlkIjoiY2I2NWE3YjctOGJhYi02ZWQ1LTgyYjAtMzk4YTA3MDZmYTZiIiwic3Vic2NyaXB0aW9uVXVpZCI6IjIzYTJhZjc5LTA4ZTctNTJlZC04MjFkLWVmNTk0MzAzYmUyMSIsImV4cCI6MTc5NTU2MTcxNiwic3Vic2NyaXB0aW9uSWQiOjI4NjAzNiwidG9rZW5UeXBlIjoic3Vic2NyaXB0aW9uIiwiaWF0IjoxNzY0MDA0MTE2LCJqdGkiOiJiMTY3ODRhMC0zMzQzLTQ3M2UtYmM1ZC0wNGZlNDYwZDRjYTAifQ.VrsuNAQbVpACiHgKAvsWCH5tn6WJr6lY1ze2LKfVobOaQp6mhpM7AiteClUTbkZBBwGRuEE1RVTeUJaXbWMJ1w" --tags "cicdtest" --report-format sarif,table --output-dir "$(Build.SourcesDirectory)/qualys"
+      mkdir -p $(Build.SourcesDirectory)/sarif_reports
+      cp /home/vsts/work/1/s/qualys/* $(Build.SourcesDirectory)/sarif_reports
+      chmod -R a+rwx $(Build.SourcesDirectory)/sarif_reports
