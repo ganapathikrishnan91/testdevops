@@ -19,7 +19,7 @@ steps:
 # STEP 2: scan using Qualys QScanner for public image (nginx:mainline-alpine3.23)
 # ─────────────────────────────────────────
 
-- task: Bash@3
+  - task: Bash@3
   displayName: "Download qscanner"
   inputs:
     scriptType: bash
@@ -30,7 +30,7 @@ steps:
         ./download_qscanner.sh
         ls -la
         chmod +x linux-amd64/qscanner
-- task: Bash@3
+  - task: Bash@3
   displayName: "Run QScanner"
   inputs:
     targetType: 'inline'
