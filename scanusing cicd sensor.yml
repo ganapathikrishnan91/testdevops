@@ -16,7 +16,7 @@ steps:
 # ─────────────────────────────────────────
 # STEP 2: Install CICD sensor with log level 5
 # ─────────────────────────────────────────
-- script: 
+  - script: 
     docker run -d --restart on-failure 
        -v /var/run/docker.sock:/var/run/docker.sock:ro \
        -v /etc/qualys:/usr/local/qualys/qpa/data/conf/agent-data \
@@ -30,15 +30,20 @@ steps:
        --cicd-deployed-sensor \
        --log-level 5 \
        --perform-sca-scan
-sleep 60
-echo "Checking Images are available (or) not "
-docker images
-echo "Checking Qualys Container sensor is running (or) not "
-docker ps -a
-displayName: "Step 2 - Install CICD Sensor"
 
 # ─────────────────────────────────────────
-# STEP 3: Scan the pulled image
+# STEP 4: cicd sensor installation validation
+# ─────────────────────────────────────────
+  - script: |
+      echo "Checking Images are available (or) not"
+      docker images
+      displayName: "Check Docker Images"
+      echo "Checking Qualys Container sensor is running (or) not "
+      docker ps -a
+      displayName: "check sensor is running or not"
+
+# ─────────────────────────────────────────
+# STEP 4: Scan the pulled image
 # ─────────────────────────────────────────
   - script: |
       echo " Give sometime to qualys to scan the image "
