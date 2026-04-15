@@ -1,8 +1,11 @@
 trigger:
   - main
- 
+
+# MICROSOFT-HOSTED  ← uses 'vmImage'
+# SELF-HOSTED  ← uses 'name' (your agent pool name)
 pool:
   name: GANA_AZUREDEVOPS
+
  
 steps:
 # ─────────────────────────────────────────
