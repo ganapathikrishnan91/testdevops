@@ -1,4 +1,7 @@
 trigger:
+- task: QualysCSConnector@5
+  inputs:
+    dockerUrl: 'unix:///var/run/docker.sock'
   - main
 
 # MICROSOFT-HOSTED  ← uses 'vmImage'
