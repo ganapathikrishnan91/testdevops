@@ -1,14 +1,13 @@
 trigger:
-- task: QualysCSConnector@5
-  inputs:
-    dockerUrl: 'unix:///var/run/docker.sock'
-  - main
+- main
 
-# MICROSOFT-HOSTED  ← uses 'vmImage'
-# SELF-HOSTED  ← uses 'name' (your agent pool name)
 pool:
   name: GANA_AZUREDEVOPS
 
+steps:
+  - task: QualysCSConnector@5
+    inputs:
+      dockerUrl: 'unix:///var/run/docker.sock'
  
 steps:
 # ─────────────────────────────────────────
