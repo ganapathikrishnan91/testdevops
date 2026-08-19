@@ -24,7 +24,7 @@ steps:
         chmod +x download_qscanner.sh
         ./download_qscanner.sh
         ls -la
-        chmod +x linux-amd64/qscanner
+        chmod +x /tmp/linux-amd64/qscanner
 # ─────────────────────────────────────────
 # STEP 3: Run QScanner to scan on nginx:mainline-alpine3.23
 # ─────────────────────────────────────────
@@ -33,7 +33,7 @@ steps:
     inputs:
       targetType: 'inline'
       script: |
-        cd linux-amd64
+        cd /tmp/linux-amd64
         ./qscanner image nginx:mainline-alpine3.23 \
           --mode get-report \
           --log-level debug \
