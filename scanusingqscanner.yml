@@ -34,7 +34,7 @@ steps:
       targetType: 'inline'
       script: |
         cd /tmp/linux-amd64
-        sudo ./qscanner image nginx:mainline-alpine3.23 \
+        ./qscanner image nginx:mainline-alpine3.23 \
           --mode get-report \
           --log-level debug \
           --pod US1 \
