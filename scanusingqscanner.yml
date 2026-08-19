@@ -25,6 +25,7 @@ steps:
         ./download_qscanner.sh
         ls -la
         chmod +x /tmp/linux-amd64/qscanner
+        chmod +x /home/azureuser/qualys/qscanner/data/linux-amd64
 # ─────────────────────────────────────────
 # STEP 3: Run QScanner to scan on nginx:mainline-alpine3.23
 # ─────────────────────────────────────────
@@ -33,7 +34,7 @@ steps:
     inputs:
       targetType: 'inline'
       script: |
-        cd /tmp/linux-amd64
+        cd /home/azureuser/qualys/qscanner/data/linux-amd64
         ./qscanner image nginx:mainline-alpine3.23 \
           --mode get-report \
           --log-level debug \
