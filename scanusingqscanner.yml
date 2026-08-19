@@ -5,11 +5,6 @@ pool:
   name: GANA_AZUREDEVOPS
 
 steps:
-  - task: QualysCSConnector@5
-    inputs:
-      dockerUrl: 'unix:///var/run/docker.sock'
- 
-steps:
 # ─────────────────────────────────────────
 # STEP 1: Check the systeminfo 
 # ─────────────────────────────────────────
