@@ -43,18 +43,15 @@ steps:
 # STEP 4: Download QScanner
 # ─────────────────────────────────────────
 #  - task: Bash@3
-    displayName: 'Download QScanner'
-    inputs:
-      targetType: 'inline'
-      script: |
-        wget https://www.qualys.com/qscanner/download/latest/download_qscanner.sh
-        chmod +x download_qscanner.sh
-        ./download_qscanner.sh/tmp/linux-amd64/qscanner
-        mkdir /tmp/linux-amd64/qscanner
-        chmod +x /tmp/linux-amd64/qscanner
-        ls -la /tmp/linux-amd64
-        chmod +x /tmp/linux-amd64/qscanner
-        cd /home/azureuser/qualys/qscanner/data/linux-amd64
+#    displayName: 'Download QScanner'
+#   inputs:
+#      targetType: 'inline'
+#      script: |
+#        wget https://www.qualys.com/qscanner/download/latest/download_qscanner.sh
+#        chmod +x download_qscanner.sh
+#        ./download_qscanner.sh/tmp/linux-amd64/qscanner
+#        ls -la /tmp/linux-amd64
+
  
 # ─────────────────────────────────────────
 # STEP 5: Run QScanner against the locally built image
