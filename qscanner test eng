@@ -1,0 +1,47 @@
+trigger:
+  - main
+
+pool:
+  name: 'QScanner-Linux-Agents'
+
+variables:
+  - group: qualys-qscanner
+  - name: IMAGE_ID
+    value: 'myapp:$(Build.BuildId)'
+  - name: QSCANNER_OUTPUT_DIR
+    value: '$(Build.ArtifactStagingDirectory)/qualys-reports'
+  - name: QSCANNER_SCAN_TIMEOUT
+    value: '600'
+
+steps:
+  - script: docker build -t "$(IMAGE_ID)" .
+    displayName: 'Build Image'
+
+  - bash: |
+      set -euo pipefail
+      mkdir -p "$QSCANNER_OUTPUT_DIR"
+      /usr/local/bin/qscanner \
+        --pod "$QSCANNER_QUALYS_POD" \
+        --mode evaluate-policy \
+        --policy-tags "$QSCANNER_POLICY_TAGS" \
+        --scan-types pkg,fileinsight,aiinsight \
+        --scan-timeout "$QSCANNER_SCAN_TIMEOUT" \
+        --output-dir "$QSCANNER_OUTPUT_DIR" \
+        image "$IMAGE_ID"
+    displayName: 'Qualys Policy Gate'
+    env:
+      QUALYS_CLIENT_ID: $(QUALYS_CLIENT_ID)
+      QUALYS_CLIENT_SECRET: $(QUALYS_CLIENT_SECRET)
+      QSCANNER_QUALYS_POD: $(QSCANNER_QUALYS_POD)
+      QSCANNER_POLICY_TAGS: $(QSCANNER_POLICY_TAGS)
+      QSCANNER_SCAN_TIMEOUT: $(QSCANNER_SCAN_TIMEOUT)
+      QSCANNER_OUTPUT_DIR: $(QSCANNER_OUTPUT_DIR)
+      IMAGE_ID: $(IMAGE_ID)
+
+  - task: PublishPipelineArtifact@1
+    displayName: 'Publish Qualys Reports'
+    condition: always()
+    inputs:
+      targetPath: '$(QSCANNER_OUTPUT_DIR)'
+      artifact: 'qualys-reports'
+      publishLocation: 'pipeline'
